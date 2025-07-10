@@ -30,17 +30,17 @@ NonLinearSolver<SC,LO,GO,NO>::~NonLinearSolver(){
 }
 
 template<class SC,class LO,class GO,class NO>
-void NonLinearSolver<SC,LO,GO,NO>::solve(NonLinearProblem_Type &problem){
+void NonLinearSolver<SC,LO,GO,NO>::solve(NonLinearProblem_Type &problem,vec_dbl_ptr_Type valuesForExport){
 
     if (!type_.compare("FixedPoint")) {
-        solveFixedPoint(problem);
+        solveFixedPoint(problem,valuesForExport);
     }
     else if(!type_.compare("Newton")){
-        solveNewton(problem);
+        solveNewton(problem,valuesForExport);
     }
     else if(!type_.compare("NOX")){
 #ifdef FEDD_HAVE_NOX
-        solveNOX(problem);
+        solveNOX(problem,valuesForExport);
 #endif
     }
 
@@ -67,7 +67,7 @@ void NonLinearSolver<SC,LO,GO,NO>::solve(TimeProblem_Type &problem, double time,
 
 #ifdef FEDD_HAVE_NOX
 template<class SC,class LO,class GO,class NO>
-void NonLinearSolver<SC,LO,GO,NO>::solveNOX(NonLinearProblem_Type &problem){
+void NonLinearSolver<SC,LO,GO,NO>::solveNOX(NonLinearProblem_Type &problem,vec_dbl_ptr_Type valuesForExport){
 
     bool verbose = problem.getVerbose();
     Teuchos::RCP<NonLinearProblem<SC,LO,GO,NO> > problemPtr = Teuchos::rcpFromRef(problem);
@@ -86,6 +86,11 @@ void NonLinearSolver<SC,LO,GO,NO>::solveNOX(NonLinearProblem_Type &problem){
 
     Teuchos::RCP<Thyra::LinearOpBase<SC> > W_op = problemPtr->create_W_op();
     Teuchos::RCP<Thyra::PreconditionerBase<SC> > W_prec = problemPtr->create_W_prec();
+
+    // cout << " NonLinearSolver<SC,LO,GO,NO>::solveNOX " << endl;
+    
+    // problemPtr->create_W_op();
+
     Teuchos::RCP<NOX::Thyra::Group> nox_group(new NOX::Thyra::Group(initial_guess,
                                                                     problemPtr.getConst(),
                                                                     W_op,
@@ -188,6 +193,8 @@ void NonLinearSolver<SC,LO,GO,NO>::solveNOX(TimeProblem_Type &problem, vec_dbl_p
     //Thyra::V_S(initialGuess.ptr(),Teuchos::ScalarTraits<SC>::zero());
     Teuchos::RCP<Thyra::LinearOpBase<SC> > W_op = problemPtr->create_W_op();
     Teuchos::RCP<Thyra::PreconditionerBase<SC> > W_prec = problemPtr->create_W_prec();
+    // problemPtr->create_W_op();
+
     Teuchos::RCP<NOX::Thyra::Group> nox_group(new NOX::Thyra::Group(initialGuess,
                                                                     problemPtr.getConst(),
                                                                     W_op,
@@ -271,7 +278,7 @@ void NonLinearSolver<SC,LO,GO,NO>::solveNOX(TimeProblem_Type &problem, vec_dbl_p
 #endif
 
 template<class SC,class LO,class GO,class NO>
-void NonLinearSolver<SC,LO,GO,NO>::solveFixedPoint(NonLinearProblem_Type &problem){
+void NonLinearSolver<SC,LO,GO,NO>::solveFixedPoint(NonLinearProblem_Type &problem,vec_dbl_ptr_Type valuesForExport){
 
     bool verbose = problem.getVerbose();
     TEUCHOS_TEST_FOR_EXCEPTION(problem.getRhs()->getNumVectors()!=1,std::logic_error,"We need to change the code for numVectors>1.");
@@ -331,7 +338,7 @@ void NonLinearSolver<SC,LO,GO,NO>::solveFixedPoint(NonLinearProblem_Type &proble
 }
 
 template<class SC,class LO,class GO,class NO>
-void NonLinearSolver<SC,LO,GO,NO>::solveNewton( NonLinearProblem_Type &problem ){
+void NonLinearSolver<SC,LO,GO,NO>::solveNewton( NonLinearProblem_Type &problem, vec_dbl_ptr_Type valuesForExport ){
 
     bool verbose = problem.getVerbose();
 
@@ -388,6 +395,13 @@ void NonLinearSolver<SC,LO,GO,NO>::solveNewton( NonLinearProblem_Type &problem )
         std::cout << "### Total Newton iterations : " << nlIts << "  with average gmres its : " << gmresIts << std::endl;
     if ( problem.getParameterList()->sublist("Parameter").get("Cancel MaxNonLinIts",false) ) {
         TEUCHOS_TEST_FOR_EXCEPTION(nlIts == maxNonLinIts ,std::runtime_error,"Maximum nonlinear Iterations reached. Problem might have converged in the last step. Still we cancel here.");
+    }
+
+    if (!valuesForExport.is_null()) {
+        if (valuesForExport->size() == 2){
+            (*valuesForExport)[0] = gmresIts;
+            (*valuesForExport)[1] = nlIts;
+        }
     }
 }
 
