@@ -139,7 +139,8 @@ int main(int argc, char *argv[]) {
         // Exporting as HDF5 Type
         HDF5Export<SC,LO,GO,NO> exporter(domain->getMapUnique(), "exportVector"); //  Map and file name
         exporter.writeVariablesHDF5("Test",aUniqueConst); // VariableName and Variable
-
+        exporter.closeExporter();
+        
         HDF5Import<SC,LO,GO,NO> importer(domain->getMapUnique(),"exportVector"); // Import Map and  file name to read
         MultiVectorPtr_Type aImported = importer.readVariablesHDF5("Test"); // VariableName 
         
@@ -150,8 +151,8 @@ int main(int argc, char *argv[]) {
         for(int i=0; i<aUniqueConst->getLocalLength(); i++)
             error += std::abs((aUniqueConst->getData(0))[i] - (aImported->getData(0))[i]);
         
-        TEUCHOS_TEST_FOR_EXCEPTION( error>1e-13, std::runtime_error, "Error between written and read vector is to great: " << error); // Checking if error between solutions is to great
-
+        TEUCHOS_TEST_FOR_EXCEPTION( error>1e-13, std::runtime_error, "Error between written and read vector is too great: " << error); // Checking if error between solutions is to great
+        TEUCHOS_TEST_FOR_EXCEPTION( error>1e-13, std::runtime_error, "Error between written and read vector is too great: " << error); // Checking if error between solutions is too great
     }
     
     

@@ -146,6 +146,7 @@ void MultiVector<SC,LO,GO,NO>::print(Teuchos::EVerbosityLevel verbLevel) const{
 #if __cplusplus >= 202002L // >= C++20
 template <typename SC, typename LO, typename GO, typename NO>
 Teuchos::RCP<Thyra::MultiVectorBase<SC> > MultiVector<SC,LO,GO,NO>::getThyraMultiVector( ) requires std::same_as<SC,double> {
+
     auto thyTpMap = Thyra::tpetraVectorSpace<SC,LO,GO,NO>(multiVector_->getMap()); //Thyra::tpetraVectorSpace<SC,LO,GO,NO>(Teuchos::rcp_dynamic_cast<const TpetraMap_Type>(multiVector_->getMap())->getTpetraMap());
     Teuchos::RCP<Tpetra::MultiVector<SC,LO,GO,NO>> tpMV = multiVector_;
     auto thyDomMap =Thyra::tpetraVectorSpace<SC,LO,GO,NO>(Tpetra::createLocalMapWithNode<LO,GO,NO>(multiVector_->getNumVectors(), multiVector_->getMap()->getComm()));

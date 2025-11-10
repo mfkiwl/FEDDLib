@@ -20,8 +20,9 @@ set(General_HEADERS
 	General/HDF5Export.hpp
 	General/HDF5Export_decl.hpp
 	General/HDF5Export_def.hpp
-	General/HDF5Import.cpp
-	General/HDF5Export.cpp
+	General/HDF5Toolbox_def.hpp
+	General/HDF5Toolbox_decl.hpp
+	General/HDF5Toolbox.hpp
 CACHE INTERNAL "")
 
 set(General_SOURCES
@@ -30,8 +31,13 @@ set(General_SOURCES
     General/ExporterTxt.cpp
 	General/InputToOutputMappingClass.cpp
 	General/DifferentiableFuncClass.cpp
+	General/HDF5Toolbox.cpp
+	General/HDF5Import.cpp
+	General/HDF5Export.cpp
 CACHE INTERNAL "")
 
+# --- Add HDF5 includes ---
+INCLUDE_DIRECTORIES(${TPL_HDF5_INCLUDE_DIRS})
 
 set(LOCAL_HEADERS)
 foreach(INC ${General_HEADERS})

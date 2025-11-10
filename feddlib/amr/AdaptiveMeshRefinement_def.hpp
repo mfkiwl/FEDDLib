@@ -227,7 +227,7 @@ domainsP1_(0)
 }
 template <class SC, class LO, class GO, class NO>
 AdaptiveMeshRefinement<SC,LO,GO,NO>::~AdaptiveMeshRefinement(){
-
+	
 }
 /*!
 \brief Initializing problem if only a certain area should be refined. 

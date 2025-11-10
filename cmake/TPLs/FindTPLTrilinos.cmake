@@ -61,8 +61,8 @@ list (APPEND FEDDLib_OPTIONAL_Trilinos_PKGS
   "NOX" "Thyra" "Rythmos" "Teko" "Stratimikos" "Isorropia" "ShyLU" "Zoltan2" "MueLu")
 
 # Required packages (to be moved outside, like REQUIRED COMPONENTS ...)
-list (APPEND FEDDLib_REQUIRED_Trilinos_PKGS
-  "Belos" "Epetra" "EpetraExt" "ShyLU_DDFROSch" "Stratimikos" "Teko" "Teuchos" "Thyra" "Tpetra" "Xpetra")
+list (APPEND XLib_REQUIRED_Trilinos_PKGS
+  "Belos" "ShyLU_DDFROSch" "Stratimikos" "Teko" "Teuchos" "Thyra" "Tpetra" "Xpetra")
 
 # Start scanning Trilinos configuration
 foreach (TYPE IN ITEMS "OPTIONAL" "REQUIRED")

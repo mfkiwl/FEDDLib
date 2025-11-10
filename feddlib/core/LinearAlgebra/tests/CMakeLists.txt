@@ -1,15 +1,15 @@
 ### Map
-tribits_add_executable(
-	map
-	SOURCES map.cpp
-)
+# tribits_add_executable(
+# 	map
+# 	SOURCES map.cpp
+# )
 
-tribits_add_test(
-	map
-    NAME map
-    ARGS
-    NUM_MPI_PROCS 4
-)
+# tribits_add_test(
+# 	map
+#     NAME map
+#     ARGS
+#     NUM_MPI_PROCS 4
+# )
 
 ### Map Tpetra
 tribits_add_executable(
